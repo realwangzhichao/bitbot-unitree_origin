@@ -56,11 +56,11 @@ namespace bitbot
         }
     }
 
-    void UnitreeGamepad::ProcessJoystickEvent(float joystick, const std::string& key)
+    void UnitreeGamepad::ProcessJoystickEvent(const Joystick& joystick, const std::string& key)
     {
-        if (this->KeyEventMap.count(key) != 0 && this->EventMap.count(this->KeyEventMap[key]) != 0)
+        if (joystick.moved && this->KeyEventMap.count(key) != 0 && this->EventMap.count(this->KeyEventMap[key]) != 0)
         {
-            this->kernel_interface->EmitEvent(this->EventMap[this->KeyEventMap[key]], joystick * 32768.0);
+            this->kernel_interface->EmitEvent(this->EventMap[this->KeyEventMap[key]], joystick.value * 32768.0);
         }
     }
 
@@ -86,11 +86,10 @@ namespace bitbot
         this->ProcessButtonEvent(this->gamepad_->down, "GAMEPAD_HAT_DOWN");
         this->ProcessButtonEvent(this->gamepad_->left, "GAMEPAD_HAT_LEFT");
 
-        this->ProcessJoystickEvent(this->gamepad_->lx, "GAMEPAD_JOYSTICK_LX");
-        this->ProcessJoystickEvent(this->gamepad_->rx, "GAMEPAD_JOYSTICK_RX");
-        this->ProcessJoystickEvent(this->gamepad_->ry, "GAMEPAD_JOYSTICK_RY");
-        this->ProcessJoystickEvent(this->gamepad_->ly, "GAMEPAD_JOYSTICK_LY");
-
+        this->ProcessJoystickEvent(this->gamepad_->lx_joystick, "GAMEPAD_JOYSTICK_LX");
+        this->ProcessJoystickEvent(this->gamepad_->rx_joystick, "GAMEPAD_JOYSTICK_RX");
+        this->ProcessJoystickEvent(this->gamepad_->ry_joystick, "GAMEPAD_JOYSTICK_RY");
+        this->ProcessJoystickEvent(this->gamepad_->ly_joystick, "GAMEPAD_JOYSTICK_LY");
     }
 
     IOType UnitreeGamepad::Output()

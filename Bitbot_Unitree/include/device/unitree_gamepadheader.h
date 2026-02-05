@@ -69,6 +69,22 @@ namespace bitbot
         bool on_toggle = false;
     };
 
+    class Joystick
+    {
+    public:
+        Joystick() {}
+        void update(float value)
+        {
+            this->moved = std::abs(value - last_value) > 0.05;
+            this->last_value = value;
+            this->value = value;
+        }
+
+        bool moved = false;
+        float value = 0;
+        float last_value = 0;
+    };
+
     class Gamepad
     {
     public:
@@ -83,6 +99,12 @@ namespace bitbot
             ry = ry * (1 - smooth) + (std::fabs(key_data.ry) < dead_zone ? 0.0 : key_data.ry) * smooth;
             l2 = l2 * (1 - smooth) + (std::fabs(key_data.L2) < dead_zone ? 0.0 : key_data.L2) * smooth;
             ly = ly * (1 - smooth) + (std::fabs(key_data.ly) < dead_zone ? 0.0 : key_data.ly) * smooth;
+
+            lx_joystick.update(lx);
+            rx_joystick.update(rx);
+            ry_joystick.update(ry);
+            l2_joystick.update(l2);
+            ly_joystick.update(ly);
 
             R1.update(key_data.btn.components.R1);
             L1.update(key_data.btn.components.L1);
@@ -107,6 +129,12 @@ namespace bitbot
         float ry = 0.;
         float l2 = 0.;
         float ly = 0.;
+
+        Joystick lx_joystick;
+        Joystick rx_joystick;
+        Joystick ry_joystick;
+        Joystick l2_joystick;
+        Joystick ly_joystick;
 
         float smooth;
         float dead_zone;
